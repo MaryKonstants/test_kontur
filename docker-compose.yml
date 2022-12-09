@@ -2,8 +2,28 @@ version: '2'
 services:
   php:
     image: yiisoftware/yii2-php:7.4-apache
+    restart: always
     volumes:
       - ~/.composer-docker/cache:/root/.composer/cache:delegated
       - ./:/app:delegated
     ports:
-      - '8000:80'
+      - '777:80'
+
+  mysql:
+    image: mysql:5.7
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=verysecret
+      - MYSQL_DATABASE=yii2basic
+      - MYSQL_USER=yii2basic
+      - MYSQL_PASSWORD=secret
+
+  phpmyadmin:
+    depends_on:
+      - mysql
+    image: phpmyadmin/phpmyadmin      #    container_name: phpmyadmin
+    restart: always
+    ports:
+      - '7500:80'
+    environment:
+      PMA_HOST: mysql

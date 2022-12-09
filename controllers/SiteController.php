@@ -8,7 +8,7 @@ use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
-use app\models\ContactForm;
+use app\models\Contact;
 
 class SiteController extends Controller
 {
@@ -105,12 +105,14 @@ class SiteController extends Controller
      */
     public function actionContact()
     {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
+        $model = new Contact();
 
-            return $this->refresh();
+        if (Yii::$app->request->isPjax) {
+            if ($model->load(Yii::$app->request->post()) && $model->save() && $model->contact(Yii::$app->params['adminEmail'])) {
+                Yii::$app->session->setFlash('contactFormSubmitted');
+            }
         }
+
         return $this->render('contact', [
             'model' => $model,
         ]);
